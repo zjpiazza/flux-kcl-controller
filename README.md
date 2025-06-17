@@ -20,9 +20,30 @@ The `flux-kcl-controller` is a component developed for the integration of [KCL](
 
 ## Prerequisites
 
+### For Linux/Mac Users:
 - k3d: used to create a k8s cluster for testing, if you already have a k8s cluster, you can skip ignore this.
 - Kustomize
 - Kubectl
+
+### For Windows Users:
+**Install WSL (Windows Subsystem for Linux):**
+1. Open PowerShell as Administrator and run:
+   ```powershell
+   wsl --install 
+2. Restart your computer.
+3. Open WSL terminal and install required tools:
+``` 
+sudo apt update
+sudo apt install make kubectl git
+
+# Install k3d
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+# Install kustomize
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+sudo mv kustomize /usr/local/bin/
+```
+### Note: All subsequent commands are the same for all platforms
 
 ## Create a test k8s cluster
 
@@ -31,6 +52,7 @@ Create a cluster using the following command:
 ```shell
 k3d cluster create
 ```
+
 
 ## Download kcl-controller and install it into the cluster
 

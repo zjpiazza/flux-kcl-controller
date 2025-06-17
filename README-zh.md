@@ -17,11 +17,34 @@ flux-kcl-controller 是一个组件，用于集成 [KCL](https://github.com/kcl-
 
 # 快速开始
 
-## 前提条件
+# 先决条件
 
-- k3d: 用于创建测试用的 k8s 集群，如果你已经有了 k8s 集群，可以忽略这一步。
+## Linux/Mac 用户：
+- k3d：用于创建 k8s 集群进行测试，如果您已经有 k8s 集群，可以跳过此步骤。
 - Kustomize
 - Kubectl
+
+## Windows 用户：
+**安装 WSL (Windows 子系统 Linux)：**
+1. 以管理员身份打开 PowerShell 并运行：
+   ```powershell
+   wsl --install 
+   ```
+2. 重启您的计算机。
+3. 打开 WSL 终端并安装所需工具：
+```bash
+sudo apt update
+sudo apt install make kubectl git
+
+# 安装 k3d
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+# 安装 kustomize
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+sudo mv kustomize /usr/local/bin/
+```
+
+### 注意：所有后续命令在所有平台上都是相同的
 
 ## 创建测试用的 k8s 集群
 
