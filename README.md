@@ -53,7 +53,6 @@ Create a cluster using the following command:
 k3d cluster create
 ```
 
-
 ## Download kcl-controller and install it into the cluster
 
 Clone this repository to local:
