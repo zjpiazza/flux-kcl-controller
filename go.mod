@@ -19,7 +19,7 @@ require (
 	github.com/hashicorp/vault/api v1.20.0
 	github.com/onsi/gomega v1.37.0
 	github.com/ory/dockertest v3.3.5+incompatible
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/pflag v1.0.7
 	github.com/stretchr/testify v1.10.0
 	k8s.io/apimachinery v0.31.1
 	k8s.io/client-go v0.31.1
