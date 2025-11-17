@@ -1,0 +1,22 @@
+apiVersion: v2
+name: flux-kcl-controller
+description: A Helm chart for the Flux KCL Controller - integrates KCL with Flux CD
+type: application
+version: 0.1.0
+appVersion: "0.8.2"
+kubeVersion: ">=1.21.0-0"
+home: https://github.com/kcl-lang/flux-kcl-controller
+sources:
+  - https://github.com/kcl-lang/flux-kcl-controller
+keywords:
+  - kcl
+  - flux
+  - gitops
+  - kubernetes
+  - configuration
+maintainers:
+  - name: KCL Team
+    url: https://github.com/kcl-lang
+annotations:
+  org.opencontainers.image.source: https://github.com/kcl-lang/flux-kcl-controller
+  org.opencontainers.image.description: Flux KCL Controller for GitOps with KCL

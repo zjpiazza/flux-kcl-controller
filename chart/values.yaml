@@ -1,0 +1,188 @@
+# Default values for flux-kcl-controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Number of controller replicas
+# For production, consider setting to 2 or more for high availability
+replicaCount: 1
+
+image:
+  # -- Controller image repository
+  repository: ghcr.io/kcl-lang/flux-kcl-controller
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: "v0.11.0"
+
+# -- Secrets for pulling images from private registries
+imagePullSecrets: []
+
+# -- Override the chart name
+nameOverride: ""
+
+# -- Override the full name
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -- Annotations to add to the controller pods
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8083"
+
+# -- Pod security context
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  # -- Service type
+  type: ClusterIP
+  # -- Service port for metrics endpoint
+  port: 8083
+  # -- Additional annotations for the service
+  annotations: {}
+
+# Prometheus ServiceMonitor configuration
+serviceMonitor:
+  # -- Enable Prometheus ServiceMonitor
+  # Requires prometheus-operator CRDs to be installed
+  enabled: false
+  # -- Additional labels for ServiceMonitor selector matching
+  additionalLabels: {}
+  # -- Interval at which metrics should be scraped
+  interval: 30s
+  # -- Timeout for scraping metrics
+  scrapeTimeout: 10s
+
+# -- Resource limits and requests for the controller
+# For production workloads, consider increasing these values
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# -- Node labels for pod assignment
+nodeSelector: {}
+
+# -- Tolerations for pod assignment
+tolerations: []
+
+# -- Affinity rules for pod assignment
+# Example for high availability with anti-affinity:
+# affinity:
+#   podAntiAffinity:
+#     preferredDuringSchedulingIgnoredDuringExecution:
+#     - weight: 100
+#       podAffinityTerm:
+#         labelSelector:
+#           matchExpressions:
+#           - key: app
+#             operator: In
+#             values:
+#             - kcl-controller
+#         topologyKey: kubernetes.io/hostname
+affinity: {}
+
+# Controller configuration
+controller:
+  # -- Log level (debug, info, error)
+  logLevel: info
+  # -- Enable leader election for high availability deployments
+  # Set to true when running multiple replicas
+  leaderElection: true
+
+# RBAC configuration
+rbac:
+  # -- Specifies whether RBAC resources should be created
+  create: true
+  # -- Grant cluster-admin privileges to the controller
+  # This allows the controller to create any Kubernetes resource from KCL code
+  # Set to false for more restrictive permissions (may limit functionality)
+  clusterAdmin: true
+
+# CRD installation
+crds:
+  # -- Install KCLRun CRD
+  install: true
+
+# -- Priority class name for the controller pods
+# Useful for ensuring critical pods are scheduled first
+# priorityClassName: "system-cluster-critical"
+priorityClassName: ""
+
+# -- Extra environment variables to add to the controller container
+extraEnv: []
+  # - name: CUSTOM_VAR
+  #   value: "custom-value"
+  # - name: SECRET_VAR
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-secret
+  #       key: secret-key
+
+# -- Extra volumes to add to the controller pod
+extraVolumes: []
+  # - name: custom-config
+  #   configMap:
+  #     name: my-config
+  # - name: cache
+  #   emptyDir: {}
+
+# -- Extra volume mounts to add to the controller container
+extraVolumeMounts: []
+  # - name: custom-config
+  #   mountPath: /etc/config
+  #   readOnly: true
+
+# Pod disruption budget configuration
+podDisruptionBudget:
+  # -- Enable PodDisruptionBudget
+  # Recommended for production deployments with multiple replicas
+  enabled: false
+  # -- Minimum number of pods that must be available
+  minAvailable: 1
+  # -- Maximum number of pods that can be unavailable
+  # Specify either minAvailable or maxUnavailable, not both
+  # maxUnavailable: 1
+
+# Liveness probe configuration
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: http-prom
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+# Readiness probe configuration
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: http-prom
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3

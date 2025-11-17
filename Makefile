@@ -169,6 +169,37 @@ ENVTEST = $(shell pwd)/bin/setup-envtest
 setup-envtest: ## Download envtest-setup locally if necessary.
 	$(call go-install-tool,$(ENVTEST),sigs.k8s.io/controller-runtime/tools/setup-envtest@latest)
 
+# Helm chart related targets
+HELM_CHART_DIR ?= chart
+HELM_NAMESPACE ?= flux-system
+
+.PHONY: helm-lint
+helm-lint: ## Lint the Helm chart
+	helm lint $(HELM_CHART_DIR)
+
+.PHONY: helm-template
+helm-template: ## Template the Helm chart
+	helm template flux-kcl-controller $(HELM_CHART_DIR) --namespace $(HELM_NAMESPACE)
+
+.PHONY: helm-install
+helm-install: ## Install the Helm chart
+	helm install flux-kcl-controller $(HELM_CHART_DIR) \
+		--namespace $(HELM_NAMESPACE) \
+		--create-namespace
+
+.PHONY: helm-upgrade
+helm-upgrade: ## Upgrade the Helm chart
+	helm upgrade flux-kcl-controller $(HELM_CHART_DIR) \
+		--namespace $(HELM_NAMESPACE)
+
+.PHONY: helm-uninstall
+helm-uninstall: ## Uninstall the Helm chart
+	helm uninstall flux-kcl-controller --namespace $(HELM_NAMESPACE)
+
+.PHONY: helm-package
+helm-package: ## Package the Helm chart
+	helm package $(HELM_CHART_DIR)
+
 # go-install-tool will 'go install' any package $2 and install it to $1.
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 define go-install-tool

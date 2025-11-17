@@ -1,0 +1,62 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Your release is named {{ .Release.Name }}.
+
+The Flux KCL Controller has been deployed to namespace: {{ .Release.Namespace }}
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
+  $ helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+The controller is now watching for KCLRun resources. To get started:
+
+1. Create a Flux source (GitRepository, OCIRepository, or Bucket):
+
+   kubectl apply -f - <<EOF
+   apiVersion: source.toolkit.fluxcd.io/v1
+   kind: GitRepository
+   metadata:
+     name: my-kcl-source
+     namespace: {{ .Release.Namespace }}
+   spec:
+     interval: 1m
+     url: https://github.com/your-org/your-kcl-repo
+     ref:
+       branch: main
+   EOF
+
+2. Create a KCLRun resource to execute your KCL code:
+
+   kubectl apply -f - <<EOF
+   apiVersion: krm.kcl.dev.fluxcd/v1alpha1
+   kind: KCLRun
+   metadata:
+     name: my-kclrun
+     namespace: {{ .Release.Namespace }}
+   spec:
+     interval: 1m
+     sourceRef:
+       kind: GitRepository
+       name: my-kcl-source
+     path: ./path/to/kcl
+   EOF
+
+3. Check the status of your KCLRun:
+
+   kubectl get kclrun -n {{ .Release.Namespace }}
+   kubectl describe kclrun my-kclrun -n {{ .Release.Namespace }}
+
+For more information:
+- Project repository: https://github.com/kcl-lang/flux-kcl-controller
+- KCL documentation: https://kcl-lang.io
+- Flux documentation: https://fluxcd.io
+
+{{- if not .Values.crds.installFluxSourceCRDs }}
+
+NOTE: Flux Source Controller CRDs were not installed with this chart.
+If you don't have Flux installed, you'll need to install the source-controller CRDs separately:
+
+  kubectl apply -f https://github.com/fluxcd/source-controller/releases/latest/download/source-controller.crds.yaml
+
+{{- end }}
